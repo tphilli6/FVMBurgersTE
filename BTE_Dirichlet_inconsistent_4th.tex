@@ -1,0 +1,90 @@
+\subsubsection{Extrapolation 2}
+
+\noindent
+
+\[
+  u_0\left(u^f_{x,i+1/2}, \bar u_{i+1}^f\right) 
+ = u_x + \Delta x^3\frac{1}{12} u_{xxx} + HOT
+\]
+
+\iftoggle{HOT}{
+  \[
+  \color{gray1}{
+  HOT = 
+  +\Delta x^5 \frac{1}{360} u_{xxxxxx}
+  + O(\Delta x^7)
+   }
+  \]
+}
+
+
+with a boundary flux truncation error centered at the boundary face
+\[
+  F_{h,BC}\left(u^f_{x,i+1/2}, \bar u^f_{i+1} \right) 
+= \frac{u^2}{2} - \nu u_x 
+    - \Delta x^3 \frac{1}{10} \nu u_{xxxx}
+    + HOT
+\]
+\iftoggle{HOT}{
+  \[ 
+    \color{gray1}{
+    HOT = 
+    + \Delta x^4 \frac{1}{10}\nu u_{xxxxx}
+    + \Delta x^5 \frac{5}{84}\nu u_{xxxxxx}
+    + O(\Delta x^6).
+    }
+  \]
+}
+
+
+
+The reference location is shifted from the boundary face to the geometric cell center resulting in a boundary flux truncation error one order lower
+\[
+  F_{h,BC}\left(u^c_{x,i-1/2}, \bar u^c_{i}\right) 
+  = \frac{u^2}{2} - \nu u_x 
+    + \Delta x^2 \left( \frac{7}{24}u u_{xx} + \frac{1}{4} u_x^2 - \frac{1}{8}\nu u_{xxx}\right)
+  + HOT
+\]
+\iftoggle{HOT}{
+  \[
+    \color{gray1}{
+    - \Delta x^3 \left( \frac{1}{16} u u_{xxx} + \frac{13}{48}u_x u_{xx} - \frac{1}{48} \nu u_{xxxx} \right)
+    }
+  \]
+  \[
+    \color{gray1}{
+   + \Delta x^4 \left( \frac{7}{640} u u_{xxxx} 
+                     + \frac{1}{16} u_x u_{xxx}
+                     + \frac{85}{1152} u_{xx}^2
+                     - \frac{1}{384}\nu u_{xxxxx} \right) 
+  + O(\Delta x^5).
+    }
+  \]
+}
+
+
+
+The boundary flux and the first interior face flux are used to compute the truncation error for the first interior cell
+
+\[
+  L_h(u_{i-1/2}^c,\bar u_{i}^c,\bar u_{i+1}^c, \bar u_{i+2})
+  = u u_x - \nu u_{xx} + \Delta x \left( \frac{1}{6} u u_{xx} +\frac{1}{8} u_x^2 - \frac{1}{12}\nu u_{xxx} \right)
+\]
+\[
+    + \Delta x^2 \left( \frac{1}{3} u_x u_{xx} + \frac{1}{8} u u_{xxx} + \frac{1}{60}\nu u_{xxxx} \right)
+    + HOT\]
+\iftoggle{HOT}{
+  \[
+  \color{gray1}{
+    HOT = 
+     \Delta x^3 \left( \frac{3}{32} u_x u_{xxx} + \frac{19}{288} u_{xx}^2 + \frac{7}{240} u u_{xxxx} + \frac{53}{1440}\nu u_{xxxxx} \right)
+  }
+  \]
+  \[
+  \color{gray1}{
+  + \Delta x^4 \left( \frac{21}{640} u_x u_{xxxx} + \frac{17}{288} u_{xx} u_{xxx} + \frac{47}{5760} u u_{xxxxx} + \frac{247}{13440}\nu u_{xxxxxx} \right)
+  }
+  \]
+}
+
+

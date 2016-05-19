@@ -1,0 +1,121 @@
+\subsubsection{Extrapolation 2}
+
+\noindent
+
+\[
+  u_{0}\left(u^f_{x,i+1/2}, \bar u_{i+1}^f, \bar u_{i+2}^f, \bar u_{i+3}^f\right) 
+ = - \Delta x^4 \frac{1}{11}u_{xxxx} + HOT
+\]
+
+\iftoggle{HOT}{
+  \[
+  \color{gray1}{
+  HOT = 
+  - \Delta x^5 \frac{19}{330} u_{xxxxx}
+  - \Delta x^6 \frac{1}{33} u_{xxxxxx}
+  + O(\Delta x^7)
+   }
+  \]
+}
+
+
+with a boundary flux truncation error centered at the boundary face
+\[
+  F_{h,BC}\left(u^f_{x,i+1/2}, \bar u^f_{i+1}, \bar u^f_{i+2}, \bar u^f_{i+3}\right) 
+= \frac{u^2}{2} - \nu u_x 
++ \Delta x^2 \left( \frac{1}{6} u u_{xx} 
+                  + \frac{1}{8} u_x^2
+                  - \frac{1}{12} \nu u_{xxx}
+              \right) + HOT
+\]
+\iftoggle{HOT}{
+  \[ 
+    \color{gray1}{
+    HOT = 
+    - \Delta x^3 \frac{1}{11}\nu u_{xxxx}
+    + \Delta x^4 \left( -\frac{49}{1320} u u_{xxxx} 
+                        +\frac{1}{48} u_x u_{xxx}
+                        +\frac{1}{72} u_{xx}^2
+                        -\frac{239}{3960} \nu u_{xxxxx}
+                \right)
+    }
+    \]
+    \[
+    \color{gray1}{
+    + \Delta x^5 \left(- \frac{19}{660}u u_{xxxxx}
+                       + \frac{1}{44} u_x u_{xxxx}
+                       - \frac{1}{33} \nu u_{xxxxxx}
+                 \right)
+    + O(\Delta x^6).
+    }
+  \]
+}
+
+
+
+The reference location is shifted from the boundary face to the geometric cell center resulting in a boundary flux truncation error one order lower
+\[
+  F_{h,BC}\left(u^c_{x,i-1/2}, \bar u^c_{i}, \bar u^c_{i+1}, \bar u^c_{i+2}\right) 
+  = \frac{u^2}{2} - \nu u_x 
+  + \Delta x^2 \left( \frac{7}{24}u u_{xx} + \frac{1}{4} u_x^2 - \frac{5}{24}\nu u_{xxx}\right)
+  + HOT
+\]
+\iftoggle{HOT}{
+  \[
+    \color{gray1}{
+    HOT = - \Delta x^3 \left( \frac{5}{48}u u_{xxx} + \frac{13}{48} u_x u_{xx} + \frac{5}{176}\nu u_{xxxx}\right)
+    }
+  \]
+  \[
+    \color{gray1}{
+    + \Delta x^4 \left(-\frac{289}{21120} u u_{xxxx} 
+                      + \frac{5}{48}u_x u_{xxx} 
+                      + \frac{85}{1152} u_{xx}^2 
+                      - \frac{1769}{63360} \nu u_{xxxxx}
+                 \right)
+    }
+  \]
+  \[
+    \color{gray1}{
+   + \Delta x^5 \left(-\frac{1769}{126720} u u_{xxxxx} 
+                     + \frac{589}{42240} u_x u_{xxxx}
+                     - \frac{65}{1152} u_{xx} u_{xxx} 
+                     - \frac{101}{10639}\nu u_{xxxxxx} \right) 
+  + O(\Delta x^6).
+    }
+  \]
+}
+
+
+The boundary flux and the first interior face flux are used to compute the truncation error for the first interior cell
+
+\[
+  L_h(u_{x,i-1/2}^c,\bar u_{i}^c,\bar u_{i+1}^c, \bar u_{i+2})
+  = u u_x - \nu u_{xx} 
+    + \Delta x^2 \left( \frac{13}{24} u_x u_{xx} 
+                      + \frac{5}{24} u u_{xxx} 
+                      - \frac{3}{88}\nu u_{xxxx}
+                 \right)
+    + HOT\]
+\iftoggle{HOT}{
+  \[
+  \color{gray1}{
+    HOT = 
+     \Delta x^3 \left(
+                       \frac{1}{22} u u_{xxxx} 
+                     + \frac{2}{165}\nu u_{xxxxx}
+                \right)
+  }
+  \]
+  \[
+  \color{gray1}{
+  + \Delta x^4 \left( \frac{372}{21120} u_x u_{xxxx} 
+                    + \frac{65}{576} u_{xx} u_{xxx} 
+                    + \frac{277}{12672} u u_{xxxxx} 
+                    + \frac{43}{7040}\nu u_{xxxxxx}
+               \right)
+  }
+  \]
+}
+
+

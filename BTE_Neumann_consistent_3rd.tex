@@ -1,0 +1,110 @@
+\subsubsection{Extrapolation 1}
+
+\noindent
+
+\[
+  u_{0}\left(u^f_{x,i+1/2}, \bar u_{i+1}^f\right) 
+ = u_x + \Delta x^3\frac{1}{12} u_{xxxx} + HOT
+\]
+
+\iftoggle{HOT}{
+  \[
+  \color{gray1}{
+  HOT = 
+  +\Delta x^5 \frac{1}{360} u_{xxxxxx}
+  + O(\Delta x^6)
+   }
+  \]
+}
+
+
+with a boundary flux truncation error centered at the boundary face
+\[
+  F_{h,BC}\left(u^f_{x,i+1/2}, \bar u^f_{i+1}\right) 
+= \frac{u^2}{2} - \nu u_x
++ \Delta x^2 \left( \frac{1}{6} u u_{xx} + \frac{1}{8} u_x^2 \right)
++ HOT
+\]
+\iftoggle{HOT}{
+  \[ 
+    \color{gray1}{
+    HOT =  
+      \Delta x^3 \left( \frac{1}{24} u u_{xxx} \right) 
+    + \Delta x^4 \left( \frac{1}{120} u u_{xxxx} + \frac{1}{72} u_{xx}^2 \right)
+    + \Delta x^5 \left( \frac{1}{720} u u_{xxxxx} + \frac{1}{144} u_{xx} u_{xxx}  \right) 
+    + O(\Delta x^6).
+    }
+  \]
+}
+
+
+
+The reference location is shifted from the boundary face to the geometric cell center resulting in a boundary flux truncation error one order lower
+\[
+  F_{h,BC}\left(u^c_{x,i-1/2}, \bar u^c_{i}\right) 
+  = \frac{u^2}{2} - \nu u_x 
+  + \Delta x^2 \left( \frac{7}{24}u u_{xx} + \frac{1}{4} u_x^2 - \frac{1}{8}\nu u_{xxx}\right)
+  + HOT
+\]
+\iftoggle{HOT}{
+  \[
+    \color{gray1}{
+    HOT = - \Delta x^3 \left( \frac{1}{16}u u_{xxx} + \frac{13}{48} u_x u_{xx} - \frac{1}{48}\nu u_{xxxx}\right)
+    }
+  \]
+  \[
+    \color{gray1}{
+    + \Delta x^4 \left( \frac{7}{640} u u_{xxxx} 
+                      + \frac{1}{16}u_x u_{xxx} 
+                      + \frac{85}{1152} u_{xx}^2 
+                      + \frac{1}{384} \nu u_{xxxxx}
+                 \right)
+    }
+  \]
+  \[
+    \color{gray1}{
+   - \Delta x^5 \left( \frac{1}{768} u u_{xxxxx} 
+                     + \frac{41}{3840} u_x u_{xxxx}
+                     + \frac{13}{384} u_{xx} u_{xxx} 
+                     - \frac{1}{3840}\nu u_{xxxxxx} \right) 
+  + O(\Delta x^6).
+    }
+  \]
+}
+
+
+The boundary flux and the first interior face flux are used to compute the truncation error for the first interior cell
+
+\[
+  L_h(u_{x,i-1/2}^c,\bar u_{i}^c,\bar u_{i+1}^c)
+  = u u_x - \nu u_{xx} 
+  + \Delta x \left( - \frac{1}{12}\nu u_{xxx} \right)
+\]
+\[
+    + \Delta x^2 \left( \frac{13}{24} u_x u_{xx} 
+                      + \frac{1}{6} u u_{xxx} 
+                      - \frac{1}{12}\nu u_{xxxx}
+                 \right)
+    + HOT\]
+\iftoggle{HOT}{
+  \[
+  \color{gray1}{
+    HOT = 
+     \Delta x^3 \left( \frac{1}{24} u_x u_{xxx} 
+                     + \frac{1}{48} u u_{xxxx} 
+                     - \frac{19}{1440}\nu u_{xxxxx}
+                \right)
+  }
+  \]
+  \[
+  \color{gray1}{
+  + \Delta x^4 \left( \frac{27}{640} u_x u_{xxxx} 
+                    + \frac{13}{144} u_{xx} u_{xxx} 
+                    + \frac{53}{5760} u u_{xxxxx} 
+                    - \frac{7}{1920}\nu u_{xxxxxx}
+               \right)
+  }
+  \]
+}
+
+

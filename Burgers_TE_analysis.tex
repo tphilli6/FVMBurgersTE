@@ -1,0 +1,564 @@
+
+\documentclass[10pt]{article}% insert '[draft]' option to show overfull boxes
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{graphicx}
+%\usepackage[margin=1cm]{caption}
+\usepackage{subfig}
+\usepackage{setspace}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{breqn}
+
+\usepackage{etoolbox}
+\providetoggle{HOT}
+\settoggle{HOT}{false}
+
+\usepackage{color}
+\definecolor{gray1}{gray}{0.6}
+\definecolor{gray2}{gray}{0.3}
+
+
+ % Define commands to assure consistent treatment throughout document
+% \newcommand{\eqnref}[1]{(\ref{#1})}
+% \newcommand{\class}[1]{\texttt{#1}}
+% \newcommand{\package}[1]{\texttt{#1}}
+% \newcommand{\file}[1]{\texttt{#1}}
+% \newcommand{\BibTeX}{\textsc{Bib}\TeX}
+
+\title{Finite Volume Burgers' Equation Truncation Error Analysis for Dirichlet and Neumann Scheme Consistent and Inconsistent Boundary Conditions}
+
+\author{Tyrone Phillips}
+\begin{document}
+
+\maketitle
+
+This document derives the truncation error for Burgers' equation using a second-order finite-volume discretization scheme assuming equal mesh spacing of size $\Delta x$.
+
+\section{Governing Equations}
+Steady-state Burgers equation takes the form
+\begin{equation}
+\frac{\partial F(u)}{\partial x} = 0
+\end{equation}
+where
+
+\begin{equation}
+F(u) = \frac{u^2}{2} - \nu \frac{\partial u}{\partial x} 
+\label{eq:F}
+\end{equation}
+and $u=u(x)$. The strong form of Burgers' equation is
+
+\begin{equation}
+u\frac{\partial u}{\partial x} - \nu \frac{\partial^2 u}{\partial x^2} = 0.
+\label{eq:L}
+\end{equation}
+The second-order finite-volume discretization is
+
+\begin{equation}
+\frac{F(u_{i+1}, u_i) - F(u_i,u_{i-1/2})}{\Delta x} = 0
+\end{equation}
+where the discrete flux is
+
+\begin{equation}
+F(u_{i+1/2}, u_i) = \frac{ u_{i+1}^2 + u_{i}^2}{4 } - \nu \frac{u_{i+1}-u_i}{\Delta x}.
+\label{eq:Fh}
+\end{equation}
+
+
+\section{Truncation Error Analysis}
+
+
+All truncation error analysis is based on the Taylor series expansion
+
+\begin{equation}
+  u(x+\Delta x) = \sum_{n=0}^\infty \frac{\Delta x^n}{n!} \left(\frac{\partial^n u}{\partial x^n}\right)_{x} = u(x) + \Delta x \left( \frac{\partial u}{\partial x}\right)_x + \frac{\Delta x^2}{2} \left(\frac{\partial^2 u}{\partial x^2}\right)_x + \frac{\Delta x^3}{6} \left( \frac{\partial^3 u}{\partial x^3}\right)_x + \dots
+\end{equation}
+A short hand notation is adopted for derivatives where $u_x=\frac{\partial u}{\partial x}$, $u_{xx} = \frac{\partial^2 u}{\partial x^2}$, etc. The reference location is excluded from the notation but will be clearly stated.
+
+
+\subsubsection{Summary of Truncation Error Analsys}
+
+Interior truncation error and the scheme consistent Dirichlet boundary condition
+
+\[
+  L_h(\bar u^c_{i-1},\bar u^c_{i},\bar u^c_{i+1}) = u u_x - \nu u_{xx}
+                                    + \Delta x^2\left( \frac{5}{24}u u_{xxx} + \frac{13}{24}u_x u_{xx} - \frac{\nu}{8} u_{xxxx} \right)
+\]
+\[
+                                    + \Delta x^4\left( \frac{91}{5760}u u_{xxxxx} + \frac{121}{1920} u_x u_{xxxx} + \frac{65}{576}u_{xx}u_{xxx} - \frac{13\nu}{1920} u_{xxxxxx} \right)
+                                    + O(\Delta x^6)
+\]
+Scheme inconsistent Dirichlet boundary condition with 3rd order accurate derivative calculation
+
+\[
+  L_h(u_{i-1/2}^c,\bar u_{i}^c,\bar u_{i+1}^c, \bar u_{i+2})
+  = u u_x - \nu u_{xx} + \Delta x \left( \frac{1}{6} u u_{xx} +\frac{1}{8} u_x^2 - \frac{1}{12}\nu u_{xxx} \right)
+\]
+\[
+    + \Delta x^2 \left( \frac{1}{3} u_x u_{xx} + \frac{1}{8} u u_{xxx} + \frac{1}{60}\nu u_{xxxx} \right)
+    + HOT
+\]
+Scheme consistent Neumann boundary condition with a 4th order accurate extrapolation to the ghost cell
+
+\[
+  L_h(u_{x,i-1/2}^c,\bar u_{i}^c,\bar u_{i+1}^c, \bar u_{i+2})
+  = u u_x - \nu u_{xx} 
+    + \Delta x^2 \left( \frac{13}{24} u_x u_{xx} 
+                      + \frac{5}{24} u u_{xxx} 
+                      - \frac{3}{88}\nu u_{xxxx}
+                 \right)
+\]
+\[
+     \Delta x^3 \left(
+                       \frac{1}{22} u u_{xxxx} 
+                     + \frac{2}{165}\nu u_{xxxxx}
+                \right)
+    + O(\Delta x^4)
+\]
+Scheme inconsistent Neumann boundary condition with a 4th order accurate extrapolation to the boundary face
+
+\[
+  L_h(u_{x,i-1/2}^c,\bar u_{i}^c,\bar u_{i+1}^c)
+  = u u_x - \nu u_{xx} 
+  + \Delta x \left( \frac{1}{6} u u_{xx} + \frac{1}{8} u_{x}^2 - \frac{1}{12}\nu u_{xxx} \right)
+\]
+\[
+    + \Delta x^2 \left( \frac{1}{3} u_x u_{xx} 
+                      + \frac{1}{8} u u_{xxx} 
+                      - \frac{1}{12}\nu u_{xxxx}
+                 \right)
+    + HOT
+\]
+
+
+\section{Finite Volume Approximations}
+The finite volume solution is represented as a control volume average
+\[
+  \bar u_i = \frac{1}{\Delta x } \int_{x_{i-1/2}}^{x_{i+1/2}} u(x) dx
+\]
+where $\Delta x = x_{i+1/2}-x_{i-1/2}$.
+
+The control volume average of several Taylor series expansions are computed and used for the subsequent derivations. 
+
+\subsection{Cell Centered Finite Volume Integrals}
+
+The first Taylor series control volume average is computed over a cell with the reference point as the geometric cell center $x_{c}$.
+
+\begin{center}
+\begin{picture}(500, 60)
+\put(100,20) {\line(0,1){30}}
+\put(180,20) {\line(0,1){30}}
+\put(260,20) {\line(0,1){30}}
+\put(340,20) {\line(0,1){30}}
+
+\put(100,10) {\vector(1,0){300} }
+\put(420,10) {\makebox(0,0){$x$} }
+
+\put(140,6) {\line(0,1){8}}
+\put(140,18) {\makebox(0,0){$x_c$}}
+
+\put(100,8) {\line(0,1){4}} 
+\put(100,2) {\makebox(0,0){$-1/2 \Delta x$}}
+\put(180,8) {\line(0,1){4}} 
+\put(180,2) {\makebox(0,0){$1/2 \Delta x$}}
+\put(260,8) {\line(0,1){4}}
+\put(260,2) {\makebox(0,0){$3/2 \Delta x$}}
+\put(340,8) {\line(0,1){4}}
+\put(340,2) {\makebox(0,0){$5/2 \Delta x $}}
+
+\put(140,35) {\makebox(0,0){$\circ$}}
+\put(140,45) {\makebox(0,0){i}}
+
+\put(220,35) {\makebox(0,0){$\circ$}}
+\put(220,45) {\makebox(0,0){i+1}}
+
+\put(300,35) {\makebox(0,0){$\circ$}}
+\put(300,45) {\makebox(0,0){i+2}}
+
+\put(380,35) {\makebox(0,0){$\circ$}}
+\put(380,45) {\makebox(0,0){i+3}}
+
+\put(140,35) {\makebox(0,0){$\circ$}}
+\put(140,45) {\makebox(0,0){i}}
+
+
+\end{picture}
+\end{center}
+
+
+\[
+\bar u_i^c= \frac{1}{\Delta x} \int_{-\Delta x/2}^{\Delta x/2} u(x_c) dx = \frac{1}{\Delta x} \int_{-\Delta x/2}^{\Delta x/2} \left[ u + \frac{\Delta x}{2} u_x + \frac{\Delta x^2}{8} u_{xx} + \frac{\Delta x^3}{48} u_{xxx} + O(\Delta x^4) \right] dx
+\]
+The final form for cell $i$ is
+
+\begin{equation}
+\bar u_i^c =  u 
+  + \frac{1}{24} u_{xx}         \Delta x^2 
+  + \frac{1}{1920} u_{xxxx}     \Delta x^4 
+  + \frac{1}{322560} u_{xxxxxx} \Delta x^6 
+  + O(\Delta x^8) 
+\end{equation}
+The same is done for cells $i\pm1$, $i\pm2$, and $i\pm3$
+
+\[
+\bar u_{i\pm1}^c = \pm\frac{1}{\Delta x} \int_{\Delta x/2}^{3/2\Delta x} u(x_c+x) dx 
+\]
+
+\[
+\bar u_{i\pm2}^c = \pm\frac{1}{\Delta x} \int_{3/2 \Delta x}^{5/2\Delta x} u(x_c+x) dx 
+\]
+
+\[
+\bar u_{i\pm3}^c = \pm\frac{1}{\Delta x} \int_{5/2 \Delta x}^{7/2\Delta x} u(x_c+x) dx 
+\]
+
+resulting in
+
+\[
+\bar u_{i\pm1}^c = u 
+  \pm                     u^c_x      \Delta x   
+  + \frac{13}{24}         u^c_{xx}   \Delta x^2 
+  \pm \frac{5}{24}        u^c_{xxx}  \Delta x^3 
+  + \frac{121}{1920}      u^c_{xxxx} \Delta x^4 
+  \pm \frac{91}{5760}     u^c_{xxxxx} \Delta x^5 
+  + \frac{1093}{322560}   u^c_{xxxxxx} \Delta x^6 
+  + O(\Delta x^7)
+\]
+
+
+\[
+\bar u_{i\pm2}^c = u 
+  \pm 2                   u^c_x      \Delta x 
+  + \frac{49}{24}         u^c_{xx}   \Delta x^2 
+  \pm \frac{17}{12}       u^c_{xxx}  \Delta x^3 
+  + \frac{1441}{1920}     u^c_{xxxx} \Delta x^4 
+  \pm \frac{931}{2880}    u^c_{xxxxx} \Delta x^5 
+  + \frac{37969}{322560}  u^c_{xxxxxx} \Delta x^6 
+  + O(\Delta x^7)
+\]
+
+
+\[
+\bar u_{i\pm3}^c = u 
+  \pm 3                    u^c_x      \Delta x   
+  + \frac{109}{24}         u^c_{xx}   \Delta x^2 
+  \pm \frac{37}{8}         u^c_{xxx}  \Delta x^3 
+  + \frac{6841}{1920}      u^c_{xxxx} \Delta x^4 
+  \pm \frac{1417}{640}     u^c_{xxxxx} \Delta x^5 
+  + \frac{372709}{322560}  u^c_{xxxxxx} \Delta x^6 
+  + O(\Delta x^7)
+\]
+
+
+\subsection{Face Centered Finite Volume Integrals}
+
+The second Taylor series control volume average is computed over a cell with the reference point as the face $x_{f}$.
+
+\begin{center}
+\begin{picture}(500, 60)
+\put(100,20) {\line(0,1){30}}
+\put(180,20) {\line(0,1){30}}
+\put(260,20) {\line(0,1){30}}
+\put(340,20) {\line(0,1){30}}
+
+\put(100,10) {\vector(1,0){300} }
+\put(420,10) {\makebox(0,0){$x$} }
+
+\put(180,6) {\line(0,1){8}}
+\put(180,1) {\makebox(0,0){$x_f$}}
+
+\put(100,8) {\line(0,1){4}} 
+\put(100,2) {\makebox(0,0){$-\Delta x$}}
+
+\put(260,8) {\line(0,1){4}}
+\put(260,2) {\makebox(0,0){$\Delta x$}}
+
+\put(340,8) {\line(0,1){4}}
+\put(340,2) {\makebox(0,0){$2 \Delta x $}}
+
+
+\put(140,35) {\makebox(0,0){$\circ$}}
+\put(140,45) {\makebox(0,0){i}}
+
+\put(220,35) {\makebox(0,0){$\circ$}}
+\put(220,45) {\makebox(0,0){i+1}}
+
+\put(300,35) {\makebox(0,0){$\circ$}}
+\put(300,45) {\makebox(0,0){i+2}}
+
+\put(380,35) {\makebox(0,0){$\circ$}}
+\put(380,45) {\makebox(0,0){i+3}}
+
+\put(140,35) {\makebox(0,0){$\circ$}}
+\put(140,45) {\makebox(0,0){i}}
+
+
+\end{picture}
+\end{center}
+
+
+\[
+\bar u_{i+1}^f= \frac{1}{\Delta x} \int_{0}^{\Delta x} u(x_f) dx = \frac{1}{\Delta x} \int_{0}^{\Delta x} \left[ u + \Delta x u_x + \frac{\Delta x^2}{2} u_{xx} + \frac{\Delta x^3}{6} u_{xxx} + O(\Delta x^4) \right] dx
+\]
+The final form for cell $i+1$ is
+
+\[
+\bar u_{i+1}^f =  u
+  + \frac{1}{2} u_x            \Delta x
+  + \frac{1}{6} u_{xx}         \Delta x^2 
+  + \frac{1}{24} u_{xxx}       \Delta x^3 
+  + \frac{1}{120} u_{xxxx}     \Delta x^4 
+  + \frac{1}{720} u_{xxxxx}   \Delta x^5 
+  + \frac{1}{5040} u_{xxxxxx}   \Delta x^6 
+  + O(\Delta x^7) 
+\]
+The same is done for cells $i$, $i-1$, $i+2$, and $i+3$
+
+\[
+\bar u_{i}^f = \frac{1}{\Delta x} \int_{-\Delta x}^{0} u(x_f+x) dx 
+\]
+
+\[
+\bar u_{i+2}^f = -\bar u_{i-1}^f= \frac{1}{\Delta x} \int_{\Delta x}^{2\Delta x} u(x_f+x) dx 
+\]
+
+\[
+\bar u_{i+3}^f = -\bar u_{i-2}^f= \frac{1}{\Delta x} \int_{2 \Delta x}^{3\Delta x} u(x_f+x) dx 
+\]
+
+
+\[
+\bar u_{i-1}^f =  u
+  - \frac{3}{2} u_x            \Delta x
+  + \frac{7}{6} u_{xx}         \Delta x^2 
+  - \frac{5}{8} u_{xxx}       \Delta x^3 
+  + \frac{31}{120} u_{xxxx}     \Delta x^4 
+  - \frac{7}{80} u_{xxxxx}   \Delta x^5 
+  + \frac{127}{5040} u_{xxxxxx}   \Delta x^6 
+  + O(\Delta x^7) 
+\]
+
+\[
+\bar u_{i}^f =  u
+  - \frac{1}{2} u_x             \Delta x
+  + \frac{1}{6} u_{xx}          \Delta x^2 
+  - \frac{1}{24} u_{xxx}        \Delta x^3 
+  + \frac{1}{120} u_{xxxx}      \Delta x^4 
+  - \frac{1}{720} u_{xxxxx}    \Delta x^5 
+  + \frac{1}{5040} u_{xxxxxx}   \Delta x^6 
+  + O(\Delta x^7) 
+\]
+
+
+\[
+\bar u_{i+2}^f =  u
+  + \frac{3}{2} u_x             \Delta x
+  + \frac{7}{6} u_{xx}          \Delta x^2 
+  + \frac{5}{8} u_{xxx}         \Delta x^3 
+  + \frac{31}{120} u_{xxxx}     \Delta x^4 
+  + \frac{7}{80} u_{xxxxx}     \Delta x^5 
+  + \frac{127}{5040} u_{xxxxxx} \Delta x^6 
+  + O(\Delta x^7) 
+\]
+
+\[
+\bar u_{i+3}^f =  u
+  + \frac{5}{2} u_x                \Delta x
+  + \frac{19}{6} u_{xx}            \Delta x^2 
+  + \frac{65}{24} u_{xxx}          \Delta x^3 
+  + \frac{211}{120}   u_{xxxx}     \Delta x^4 
+  + \frac{133}{144}     u_{xxxxx} \Delta x^5 
+  + \frac{2059}{5040} u_{xxxxxx}   \Delta x^6 
+  + O(\Delta x^7) 
+\]
+
+
+
+%\[
+%\bar u_{i\pm2}^c = \pm\frac{1}{\Delta x} \int_{3/2 \Delta x}^{5/2\Delta x} u(x_c) dx 
+%\]
+%resulting in
+%
+%\begin{dmath}
+%\bar u_{i\pm1}^c = u 
+%  \pm                     u^c_x      \Delta x   
+%  + \frac{13}{24}         u^c_{xx}   \Delta x^2 
+%  \pm \frac{5}{24}        u^c_{xxx}  \Delta x^3 
+%  + \frac{121}{1920}      u^c_{xxxx} \Delta x^4 
+%  \pm \frac{91}{5760}     u^c_{xxxxx} \Delta x^5 
+%  + \frac{1093}{322560}   u^c_{xxxxxx} \Delta x^6 
+%  + O(\Delta x^7)
+%\end{dmath}
+%and
+%
+%\begin{dmath}
+%\bar u_{i\pm2}^c = u 
+%  \pm 2                   u^c_x      \Delta x   
+%  + \frac{49}{24}         u^c_{xx}   \Delta x^2 
+%  \pm \frac{17}{12}       u^c_{xxx}  \Delta x^3 
+%  + \frac{1441}{1920}     u^c_{xxxx} \Delta x^4 
+%  \pm \frac{931}{2880}    u^c_{xxxxx} \Delta x^5 
+%  + \frac{37969}{322560}  u^c_{xxxxxx} \Delta x^6 
+%  + O(\Delta x^7)
+%\end{dmath}
+
+\section{Interior Flux}
+The discrete flux is
+\[
+  F_h(\bar u^f_{i+1}, \bar u^f_{i}) = \frac{(\bar u^f_{i+1})^2+(\bar u^f_{i})^2}{4} - \nu \frac{\bar u^f_{i+1}-\bar u^f_{i}}{\Delta x}.
+\]
+
+The previous derivations are inserted into the discrete flux using Taylor series centered at the face $u^f$
+\[
+  F_h(\bar u^f_{i+1}, \bar u^f_{i}) = \frac{u^2}{2} - \nu u_x
+    + \Delta x^2\left( \frac{1}{6}u u_{xx} + \frac{1}{8}u_x^2 - \frac{\nu}{12}u_{xxx} \right)
+\]
+\[
+    + \Delta x^4\left( \frac{1}{48}u_x u_{xxx} + \frac{1}{72}u_{xx}^2+\frac{1}{120}u u_{xxxx} - \frac{\nu}{360}u_{xxxxx} \right)
+    + O(\Delta x^6).
+\]
+which is clearly second order accurate. The full discretization for Burgers' equation is 
+\[
+  L_h(\bar u^f_{i-1},\bar u^f_{i},\bar u^f_{i+1}) = \frac{F_h(\bar u^f_{i+1}, \bar u^f_{i}) - F_h(\bar u^f_{i}, \bar u^f_{i-1})}{\Delta x}
+\]
+however, inorder to combine the Taylor series expansions the right face and left must have the same reference point. The cell center is used instead. The discrete flux at the face is now
+
+\[
+  F_h(\bar u^c_{i+1}, \bar u^c_{i}) = \frac{u^2}{2} -\nu u_x
+                                    + \Delta x \left( \frac{1}{2}u u_x - \frac{\nu}{2} u_{xx} \right)
+                                    + \Delta x^2\left( \frac{7}{24}u u_{xx} + \frac{1}{4}u_x^2 - \frac{5\nu}{24} u_{xxx} \right)
+\]
+\[
+                                    + \Delta x^3\left( \frac{5}{48}u u_{xxx} + \frac{13}{48}u_x u_{xx} - \frac{\nu}{16} u_{xxxx} \right)
+                                    + \Delta x^4\left( \frac{61}{1920}u u_{xxxx} + \frac{5}{48}u_x u_{xxx} + \frac{85}{1152}u_{xx}^2 - \frac{91\nu}{5760} u_{xxxxx} \right) 
+                                    + O(\Delta x^5)
+\]
+and
+
+\[
+  F_h(\bar u^c_{i}, \bar u^c_{i-1}) = \frac{u^2}{2} -\nu u_x
+                                    - \Delta x \left( \frac{1}{2}u u_x - \frac{\nu}{2} u_{xx} \right)
+                                    + \Delta x^2\left( \frac{7}{24}u u_{xx} + \frac{1}{4}u_x^2 - \frac{5\nu}{24} u_{xxx} \right)
+\]
+\[
+                                    - \Delta x^3\left( \frac{5}{48}u u_{xxx} + \frac{13}{48}u_x u_{xx} - \frac{\nu}{16} u_{xxxx} \right)
+                                    + \Delta x^4\left( \frac{61}{1920}u u_{xxxx} + \frac{5}{48}u_x u_{xxx} + \frac{85}{1152}u_{xx}^2 - \frac{91\nu}{5760} u_{xxxxx} \right)
+                                    + O(\Delta x^5)
+\]
+which results in an interior truncation error of
+
+\[
+  L_h(\bar u^c_{i-1},\bar u^c_{i},\bar u^c_{i+1}) = u u_x - \nu u_{xx}
+                                    + \Delta x^2\left( \frac{5}{24}u u_{xxx} + \frac{13}{24}u_x u_{xx} - \frac{\nu}{8} u_{xxxx} \right)
+\]
+\[
+                                    + \Delta x^4\left( \frac{91}{5760}u u_{xxxxx} + \frac{121}{1920} u_x u_{xxxx} + \frac{65}{576}u_{xx}u_{xxx} - \frac{13\nu}{1920} u_{xxxxxx} \right)
+                                    + O(\Delta x^6)
+\]
+
+
+\section{Dirichlet Boundary Conditions}
+
+\subsection{Scheme Consistent BCs}
+Scheme consistent boundary conditions are implemented using a ghost cell where $u_0 = \frac{1}{\Delta x} \int_{x_{1/2}-\Delta x}^{x_{1/2}} \tilde u(x)dx$. Once the ghost cell is set, the flux and the boundary face is computed exactly as if it were an interior cell with truncation error that is identical to the interior scheme. 
+
+
+\[
+  L_h(\bar u^c_{i-1},\bar u^c_{i},\bar u^c_{i+1}) = u u_x - \nu u_{xx}
+                                    + \Delta x^2\left( \frac{5}{24}u u_{xxx} + \frac{13}{24}u_x u_{xx} - \frac{\nu}{8} u_{xxxx} \right)
+\]
+\[
+                                    + \Delta x^4\left( \frac{91}{5760}u u_{xxxxx} + \frac{121}{1920} u_x u_{xxxx} + \frac{65}{576}u_{xx}u_{xxx} - \frac{13\nu}{1920} u_{xxxxxx} \right)
+                                    + O(\Delta x^6)
+\]
+
+
+
+\subsection{Scheme Inconsistent BCs}
+The scheme inconsistent Dirichlet boundary condition is implemented at the boundary face $u_{1/2} = \tilde u(x_{1/2})$. (Note that $x_{1/2}$ is the left boundary face.)  The scheme inconsistent implementation requires a one-sided difference to compute the solution derivative at the face. Two extrapolations are used, derived from a $3^{rd}$ order and $4^{th}$ order accurate least-squares reconstruction which results in a $2^{nd}$ and $3^{rd}$ order accurate derivative calculation: 
+
+\[
+  u_{x,1/2}\left(u_{1/2}, \bar u_1, \bar u_2\right) = - \frac{6 u_{1/2} - 7 \bar u_1 - \bar u_2 }{2 \Delta x} 
+\]
+and
+\[
+  u_{x,1/2}(u_{1/2}, \bar u_1, \bar u_2, \bar u_3) = - \frac{66 u_{1/2} -85 \bar u_1 + 23 \bar u_2 - 4 \bar u_3 }{18 \Delta x},
+\]
+respectively. The boundary flux is then computed using the analytic flux given in Equation~\ref{eq:F}
+\[
+F_{h,BC}\left(u_{1/2}, \bar u_1, \bar u_2\right) 
+= \frac{1}{2} u_{1/2}^2 - \nu u_{x,1/2}\left(u_{1/2}, \bar u_1, \bar u_2\right).
+\]
+The residual for the first cell is computed 
+
+\[
+  L_h(u_{1/2},\bar u_{1},\bar u_{2}) = 
+    \frac{F_h(\bar u_1, \bar u_2) - F_{h,BC}\left( u_{1/2}, \bar u_1, \bar u_2 \right)}{\Delta x}
+\]
+
+\input{BTE_Dirichlet_inconsistent_3rd.tex}
+\input{BTE_Dirichlet_inconsistent_4th.tex}
+
+
+
+\section{Neumann Boundary Conditions}
+Scheme consistent Neumann boundary conditions are implemented by setting the boundary gradient at the face $u_{1/2} = \tilde u(x_{1/2})$ an extrapolating through the face to set the ghost cell value $u_0$. The flux at the boundary face is then computed using the standard interior flux scheme. The scheme inconsistent Neumann boundary condition is implemented at the boundary face $u_{1/2} = \tilde u(x_{1/2})$ and the value at the face is computed using an extrapolation from the interior as well as the gradient value at the face. Both extrapolations are derived from a $3^{rd}$ and $4^{th}$ order accurate least-squares reconstruction. The scheme consistent Neumann extrapolations to the ghost cell are
+
+
+\subsection{Scheme Consistent BCs}
+
+
+\[
+  u_{0}\left(u_{x,1/2}, \bar u_1 \right) = \bar u_1 - u_{x,1/2} \Delta x
+\]
+and
+\[
+  u_{0}(u_{x,1/2}, \bar u_1, \bar u_2, \bar u_3) = \frac{-12 u_{x,1/2}\Delta x + 9 \bar u_1 + 3 \bar u_2 -  \bar u_3 }{11},
+\]
+respectively. The boundary flux is then computed using the analytic flux given in Equation~\ref{eq:F}
+\[
+F_{h,BC}\left(u_{x,1/2}, \bar u_1, \bar u_2\right) 
+= \frac{\bar u_1^2 + u_0^2}{4} - \nu \frac{\bar u_1 - u_0}{dx}.
+\]
+Note that the specified gradient at the face $u_{x,1/2}$ is not used in the flux. The finite difference is used so that truncation error is added, this results in specific truncation error terms with an opposite sign to truncation error terms in the first interior face. The result is error cancellation and, therefore, a second order truncation error in the first cell. If the specified gradient is used, then the truncation error in the first cell is only first order accurate. The residual for the first cell is computed 
+
+\[
+  L_h(u_{x,1/2},\bar u_{1},\bar u_{2}) = 
+    \frac{F_h(\bar u_1, \bar u_2) - F_{h,BC}\left( u_{x,1/2}, \bar u_1, \bar u_2 \right)}{\Delta x}
+\]
+
+
+\input{BTE_Neumann_consistent_3rd.tex}
+\input{BTE_Neumann_consistent_4th.tex}
+
+
+
+\subsection{Scheme Inconsistent BCs}
+
+
+\[
+  u_{1/2}\left(u_{x,1/2}, \bar u_1, \bar u_2 \right) = -\frac{2u_{x,1/2}\Delta x -7 \bar u_1 + \bar u_2}{6}
+\]
+and
+\[
+  u_{1/2}(u_{x,1/2}, \bar u_1, \bar u_2, \bar u_3) = -\frac{18 u_{x,1/2}\Delta x - 85 \bar u_1 + 23 \bar u_2 - 4\bar u_3 }{66},
+\]
+respectively. The boundary flux is then computed using the analytic flux given in Equation~\ref{eq:F}
+\[
+F_{h,BC}\left(u_{1/2}, u_{x,1/2} \right) 
+= \frac{u_{1/2}^2}{2} - \nu u_{x,1/2}.
+\]
+The residual for the first cell is
+
+\[
+  L_h(u_{1/2}, u_{x,1/2},\bar u_{1},\bar u_{2}) = 
+    \frac{F_h(\bar u_1, \bar u_2) - F_{h,BC}\left( u_{1/2}, u_{x,1/2}\right)}{\Delta x}
+\]
+
+
+\input{BTE_Neumann_inconsistent_3rd.tex}
+\input{BTE_Neumann_inconsistent_4th.tex}
+
+\end{document}
+
+% - Release $Name:  $ -
